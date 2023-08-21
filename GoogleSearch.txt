@@ -1,0 +1,86 @@
+package com.pft.AETN.WOCreation;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+public class GoogleSearch2 {
+
+	public static void main(String[] args) throws InterruptedException {
+
+		// Supress Chrome options
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("start-maximized"); // open Browser in maximized mode
+		options.addArguments("disable-infobars"); // disabling infobars
+		options.addArguments("--disable-extensions"); // disabling extensions
+		options.addArguments("--disable-gpu"); // applicable to windows os only
+		options.addArguments("--disable-dev-shm-usage"); // overcome limited resource problems
+		options.addArguments("--no-sandbox"); // Bypass OS security model
+		options.addArguments("--disable-blink-features=AutomationControlled");
+
+		WebDriver driver = new ChromeDriver();
+		// open google
+		driver.get("https://www.google.com");
+
+		int width = 1920;
+		int height = 1080;
+		Dimension dimension = new Dimension(width, height);
+		driver.manage().window().setSize(dimension);
+		driver.manage().window().maximize();
+
+		// Sending Gautham Shenoy Text for Google Search
+		String wordToBeSearched = "Gautham Shenoy";
+		driver.findElement(By.name("q")).sendKeys(wordToBeSearched);
+
+		// Wait for Google Auto suggestions
+		WebDriverWait waitForAutoSuggestionToAppear = new WebDriverWait(driver, Duration.ofSeconds(5));
+		waitForAutoSuggestionToAppear.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul")));
+
+		// Click to Enter to Get Google Search Results
+		driver.findElement(By.name("q")).sendKeys(Keys.ENTER);
+
+		// Wait for Google search result to appear
+		WebDriverWait waitForSearchResultToAppear = new WebDriverWait(driver, Duration.ofSeconds(5));
+		waitForSearchResultToAppear.until(ExpectedConditions.presenceOfElementLocated(By.id("rso")));
+
+		// Pagination to check all search results provided
+		boolean isNextButtonDisplayed = driver.findElement(By.xpath("//*[text()='Next']")).isDisplayed();
+		do {
+			// Wait for Next Page SearchResult to Appear
+			waitForSearchResultToAppear.until(ExpectedConditions.presenceOfElementLocated(By.id("rso")));
+						
+			// Assert whether Searched text is present in search results
+			List<WebElement> searchResults = driver.findElement(By.id("rso"))
+					.findElements(By.xpath("//h3[contains(text(),'" +wordToBeSearched+"')]"));
+			for (WebElement eachSearchResult : searchResults) {
+				Assert.assertTrue(eachSearchResult.getText().contains(wordToBeSearched));
+				System.out.println("Searched text: " + wordToBeSearched + " is present in search results");
+			}
+			
+			//Click on Next button till nth page in Search Results
+			try
+			{
+			driver.findElement(By.xpath("//*[text()='Next']")).click();
+			isNextButtonDisplayed = driver.findElement(By.xpath("//*[text()='Next']")).isDisplayed();
+			}catch(Exception e)
+			{
+				isNextButtonDisplayed = false;
+			}
+			
+		} while (isNextButtonDisplayed);
+
+		driver.close();
+	}
+}
