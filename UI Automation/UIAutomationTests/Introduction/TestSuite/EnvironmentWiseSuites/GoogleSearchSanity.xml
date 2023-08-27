@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="UiAutomation Suite">
+	<listeners>
+	</listeners>
+
+	<parameter name="browser" value="chrome" />
+
+	<test thread-count="5" name="GoogleSearchAndAssertingSearchResultsIncludingPagination">
+    <classes>
+      <class name="com.testClass.GoogleSearchAndAssertingSearchResultsIncludingPagination"/>
+    </classes>
+  </test>
+</suite> 
+
