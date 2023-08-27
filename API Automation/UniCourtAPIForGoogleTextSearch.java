@@ -9,7 +9,10 @@ public class UniCourtAPITest {
    final static String textToBeAsserted="Google";
    public static void main(String args[]) {
 	 
+	 //Assert if Enterprise API is giving 200 response when invoked
 	 getResponseStatus();
+	 
+	 //Invoke Enterprise API and assert if search text is present in each JSON Response
      getResponseBody();
      
  }
